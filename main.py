@@ -6,7 +6,11 @@ true = True
 false = False
 width = 1200
 height = 800
-background = pygame.image.load('./background.jpg')
+background = pygame.image.load('./assets/background.jpg')
+pointer = pygame.image.load('./assets/pointer.png')
+
+game_width = 3600
+game_height = 2400
 
 gradient = list(colour.Color('#027afe').range_to(colour.Color('#ff0000'), 102))
 print(len(gradient))
@@ -18,6 +22,8 @@ print(len(gradient))
 
 class Sphere:
     playerSize = 0
+    player = None
+    scale = 1
 
     def __init__(self, size, x, y):
         self.size = size
@@ -53,9 +59,9 @@ class Sphere:
     def move(self) -> None:
         self.x += self.speed_x
         self.y += self.speed_y
-        if self.x + self.size >= width or self.x - self.size <= 0:
+        if self.x + self.size >= game_width or self.x - self.size <= 0:
             self.speed_x *= -1
-        if self.y + self.size >= height or self.y - self.size <= 0:
+        if self.y + self.size >= game_height or self.y - self.size <= 0:
             self.speed_y *= -1
 
     def speed(self, x: float, y: float) -> None:
@@ -63,17 +69,26 @@ class Sphere:
         self.speed_y += y
 
     def pos(self):
-        return self.x, self.y
+        return (self.x - self.player.x) * self.scale + self.player.pos()[0], (self.y - self.player.y) * self.scale + \
+               self.player.pos()[1]
+
+    def scaled_size(self):
+        return self.size * self.scale
 
 
 class Player(Sphere):
     def update(self):
         self.move()
         Sphere.playerSize = self.size
+        Sphere.player = self
 
-    def accelerate(self, x, y, power):
-        if power >=3:
-            print(str(power)*100)
+    def pos(self):
+        return (width / 2, height / 2)
+
+    def accelerate(self, trig, power):
+        x, y = trig
+        # if power >=3:
+        #     print(str(power)*100)
         if x > 1: x = 1
         if y > 1: y = 1
         if x < -1: x = -1
@@ -84,8 +99,8 @@ class Player(Sphere):
             y=self.y + 1.1 * self.size * y
         )
         self.size -= math.sqrt(new_sphere.size) / 1
-        increase_x=(new_sphere.size / self.size) * power * x
-        increase_y=(new_sphere.size / self.size) * power * y
+        increase_x = (new_sphere.size / self.size) * power * x
+        increase_y = (new_sphere.size / self.size) * power * y
         self.speed_x -= increase_x
         self.speed_y -= increase_y
         new_sphere.speed(1 / self.size * 100 * x, 1 / self.size * 100 * y)
@@ -131,6 +146,18 @@ def set_text(string, coordx, coordy, fontSize):  # Function to set text
     return (text, textRect)
 
 
+def get_trig(player):
+    x, y = pygame.mouse.get_pos()
+    x, y = [x - player.pos()[0], y - player.pos()[1]]
+    # print('x', 'y', x, y)
+    hyp = math.sqrt(pow(x, 2) + pow(y, 2))
+    sin = y / hyp
+    cos = x / hyp
+    # print(sin,'sin')
+    # print(cos,'cos')
+    return cos, sin
+
+
 class GameCore:
     def __init__(self):
         pygame.init()
@@ -143,8 +170,9 @@ class GameCore:
 
     def level_init(self):
         self.paused = false
-        self.player = Player(50, random.randint(0, 1200), random.randint(0, 800))
-        self.enemies = [Sphere(random.randint(2, 20), random.randint(0, 1200), random.randint(0, 800)) for x in
+        self.player = Player(50, random.randint(0, game_width), random.randint(0, game_height))
+        self.enemies = [Sphere(random.randint(2, 20), random.randint(0, game_width), random.randint(0, game_height)) for
+                        x in
                         range(100)]
         # for enemy in self.enemies:
         #     enemy.speed(random.randint(-1, 1) / 1, random.randint(-1, 1) / 1)
@@ -210,10 +238,17 @@ class GameCore:
         running = true
         player = self.player
         enemies = self.enemies
-        clicks=0
+        clicks = 0
+        scale = 1
         while running:
-            # screen.fill((0, 0, 255))
-            self.screen.blit(background, (0, 0))
+            self.screen.fill((0, 0, 255))
+            # self.screen.blit(background, (0, 0))
+            ratio = (width / game_width) * scale
+            # self.screen.blit(pygame.transform.scale(background, (game_width, game_height)), (round(-player.x*(width/game_width)*scale), round(-player.y*(width/game_width))*scale))
+            self.screen.blit(
+                pygame.transform.scale(background, (round(game_width * scale), round(game_height * scale))),
+                (round(-(player.x * scale - player.pos()[0])), round(-(player.y * scale - player.pos()[1]))))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return false
@@ -222,23 +257,32 @@ class GameCore:
                         self.paused = true
                 if not self.paused:
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 4:
+                            if width / player.scaled_size() > 15:
+                                scale += 0.1
+                        if event.button == 5:
+                            if scale > 0.1 and width / player.scaled_size() < 40:
+                                scale -= 0.1
                         if event.button == 1:
-                            clicks+=50
-                            x, y = pygame.mouse.get_pos()
-                            # print((x-player.x)/player.size,(y-player.y)/player.size)
+                            clicks += 50
+                            # x, y = pygame.mouse.get_pos()
+                            # # print((x-player.x)/player.size,(y-player.y)/player.size)
+                            # print(get_trig(x - player.pos()[0],y -  player.pos()[1]))
+                            print(get_trig(player))
                             enemies.append(
-                                player.accelerate((x - player.x) / player.size, (y - player.y) / player.size, clicks//30))
-            if clicks>0:
-                clicks-=1
-            print(clicks)
+                                player.accelerate(get_trig(player), clicks // 30))
+                        Sphere.scale = scale
+            if clicks > 0:
+                clicks -= 1
+            # print(clicks)
             if not self.paused:
                 if player.size < 1:
                     return self.game_over()
-                pygame.draw.circle(self.screen, (0, 30, 255), player.pos(), player.size)
+                pygame.draw.circle(self.screen, (0, 30, 255), player.pos(), player.scaled_size())
                 player.update()
                 # Sphere.playerSize = player.size
-                for enemy in enemies.copy():  # TODO delete enemy
-                    pygame.draw.circle(self.screen, enemy.color, enemy.pos(), enemy.size)
+                for enemy in enemies.copy():
+                    pygame.draw.circle(self.screen, enemy.color, enemy.pos(), enemy.scaled_size())
                     if not enemy.update():
                         enemies.remove(enemy)
                 for enemy in enemies + [player]:
@@ -246,6 +290,11 @@ class GameCore:
                         if enemy2 != enemy:
                             if collision(enemy, enemy2):
                                 attack(enemy, enemy2)
+                pygame.draw.circle(self.screen, (150, 150, 150),
+                                   [pos + (player.scaled_size() * 1.5) * dir for pos, dir in
+                                    zip(player.pos(), get_trig(player))], 5)
+                # self.screen.blit(pointer,[pos + (player.scaled_size() * 1.5) * dir for pos, dir in
+                #                     zip(player.pos(), get_trig(player))])
             else:
                 if not self.pause_menu():
                     return false
