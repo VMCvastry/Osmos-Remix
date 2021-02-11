@@ -38,7 +38,7 @@ def game_over(self):
         self.clock.tick(self.fps)
 
 
-def pause_menu(self):
+def pause_menu(self,won=false):
     running = true
     btn1 = pygame.Rect(((width - 200) // 2, 300, 200, 80))
     btn2 = pygame.Rect(((width - 200) // 2, 500, 200, 80))
@@ -55,8 +55,12 @@ def pause_menu(self):
                         return true
                     if btn2.collidepoint((x, y)):
                         return false
-        text0 = set_text("Pause", width // 2, 70, 50)
-        text1 = set_text("Resume", width // 2, 335, 20)
+        if won:
+            text0 = set_text("You Won", width // 2, 70, 50)
+            text1 = set_text("Continue anyway", width // 2, 335, 20)
+        else:
+            text0 = set_text("Pause", width // 2, 70, 50)
+            text1 = set_text("Resume", width // 2, 335, 20)
         text2 = set_text("Exit", width // 2, 535, 20)
         pygame.draw.rect(self.screen, (0, 255, 0), btn1)
         pygame.draw.rect(self.screen, (0, 255, 0), btn2)

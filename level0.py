@@ -7,8 +7,8 @@ from main import *
 
 
 def level0_init(self: GameCore):
-    self.paused = false
-    self.player = Player(300, random.randint(20, game_width-20), random.randint(20, game_height-20))
+
+    self.player = Player(20, random.randint(20, game_width-20), random.randint(20, game_height-20))
     # self.player = Player(200, 400, 400)
 
     self.enemies = [Sphere(random.randint(2, 20), random.randint(20, game_width-20),random.randint(20, game_height-20)) for
@@ -26,6 +26,8 @@ def level0(self: GameCore):
     enemies = self.enemies
     clicks = 0
     scale = 1
+    won=false
+    self.paused = false
     while running:
         self.screen.fill((0, 0, 255))
         # self.screen.blit(background, (0, 0))
@@ -86,9 +88,16 @@ def level0(self: GameCore):
                                 zip(player.pos(), get_trig(player))], 5)
             # self.screen.blit(pointer,[pos + (player.scaled_size() * 1.5) * dir for pos, dir in
             #                     zip(player.pos(), get_trig(player))])
+            if all([player.size>enemy.size for enemy in enemies]) and not won:
+                won=true
+                self.paused=true
         else:
-            if not pause_menu(self):
-                return false
+            if won:
+                if not pause_menu(self,won=true):
+                    return false
+            else:
+                if not pause_menu(self):
+                    return false
 
         pygame.display.update()
         self.clock.tick(self.fps)

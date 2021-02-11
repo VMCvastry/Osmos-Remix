@@ -70,9 +70,9 @@ class Player(Sphere):
         x, y = trig
         # if power >=3:
         #     print(str(power)*100)
-
+        force=self.size*power*10
         new_sphere = Sphere(
-            size=math.sqrt(self.size) / (3 / power),
+            size=pow(force,0.3) ,
             x=self.x + 1.5 * self.size * x,
             y=self.y + 1.5 * self.size * y
         )
@@ -80,7 +80,6 @@ class Player(Sphere):
         if self.size**2-new_sphere.size**2<0:
             self.size=0
             return new_sphere
-        force=10000
         self.size=math.sqrt(self.size**2-new_sphere.size**2)
         increase_x = (force/self.size**2) * x
         increase_y = (force/self.size**2) * y
