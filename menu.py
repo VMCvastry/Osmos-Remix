@@ -1,16 +1,9 @@
 import pygame, random, math, colour
 from constants import *
-from structures import Properties
+from structures import Properties,general_interactions_handler
 
 
-def set_text(string, coordx, coordy, fontSize):  # Function to set text
 
-    font = pygame.font.Font('freesansbold.ttf', fontSize)
-    # (0, 0, 0) is black, to make black text
-    text = font.render(string, True, (0, 0, 0))
-    textRect = text.get_rect()
-    textRect.center = (coordx, coordy)
-    return (text, textRect)
 
 def game_over(game: Properties):
     running = true
@@ -19,9 +12,8 @@ def game_over(game: Properties):
     while running:
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game.level = -1
-                return
+            if not general_interactions_handler(game, event):
+                return false
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     x, y = pygame.mouse.get_pos()
@@ -49,9 +41,8 @@ def pause_menu(game: Properties,won=false):
     while running:
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game.level = -1
-                return
+            if not general_interactions_handler(game, event):
+                return false
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     x, y = pygame.mouse.get_pos()
@@ -77,17 +68,17 @@ def pause_menu(game: Properties,won=false):
         game.clock.tick(game.fps)
 
 def main_menu(game: Properties):
-    game.screen.fill((0, 0, 255))
+
     running = true
     btn1 = pygame.Rect(((width - 200) // 2, 300, 200, 80))
     btn2 = pygame.Rect(((width - 200) // 2, 500, 200, 80))
     btn3 = pygame.Rect(((width - 200) // 2, 700, 200, 80))
     while running:
+        game.screen.fill((0, 0, 255))
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game.level = -1
-                return
+            if not general_interactions_handler(game, event):
+                return false
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     x, y = pygame.mouse.get_pos()

@@ -47,3 +47,14 @@ def get_trig(player):
     # print(sin,'sin')
     # print(cos,'cos')
     return cos, sin
+
+def get_trig_general(subject:Sphere,object:Sphere):
+    x, y = object.x,object.y
+    x, y = [x - subject.x, y - subject.y]
+    # print('x', 'y', x, y)
+    hyp = math.sqrt(pow(x, 2) + pow(y, 2))
+    sin = y / hyp
+    cos = x / hyp
+    # print(sin,'sin')
+    # print(cos,'cos')
+    return cos, sin
