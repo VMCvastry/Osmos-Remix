@@ -1,8 +1,23 @@
 import pygame, random, math, colour
 from constants import *
-from structures import Properties,general_interactions_handler
+from structures import Properties, set_text
 
 
+def general_interactions_handler(game, event):
+    if event.type == pygame.QUIT:
+        game.level = -1
+        return false
+    elif event.type == pygame.VIDEORESIZE:
+        new_size = event.dict['size']
+        global width, height
+        print(new_size)
+        width, height = new_size
+        if width < 1200:
+            width = 1200
+        if height < 800:
+            height = 800
+        game.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE | pygame.HWSURFACE | pygame.DOUBLEBUF)
+    return true
 
 
 def game_over(game: Properties):
@@ -20,7 +35,7 @@ def game_over(game: Properties):
                     if btn1.collidepoint((x, y)):
                         return
                     if btn2.collidepoint((x, y)):
-                        game.level=0
+                        game.level = 0
                         return
         text0 = set_text("Game Over", width // 2, 70, 50)
         text1 = set_text("Retry", width // 2, 335, 20)
@@ -34,7 +49,7 @@ def game_over(game: Properties):
         game.clock.tick(game.fps)
 
 
-def pause_menu(game: Properties,won=false):
+def pause_menu(game: Properties, won=false):
     running = true
     btn1 = pygame.Rect(((width - 200) // 2, 300, 200, 80))
     btn2 = pygame.Rect(((width - 200) // 2, 500, 200, 80))
@@ -67,8 +82,8 @@ def pause_menu(game: Properties,won=false):
         pygame.display.update()
         game.clock.tick(game.fps)
 
-def main_menu(game: Properties):
 
+def main_menu(game: Properties):
     running = true
     btn1 = pygame.Rect(((width - 200) // 2, 300, 200, 80))
     btn2 = pygame.Rect(((width - 200) // 2, 500, 200, 80))
@@ -83,7 +98,7 @@ def main_menu(game: Properties):
                 if event.button == 1:
                     x, y = pygame.mouse.get_pos()
                     if btn1.collidepoint((x, y)):
-                        game.level=1
+                        game.level = 1
                         return
                     if btn2.collidepoint((x, y)):
                         game.level = 2

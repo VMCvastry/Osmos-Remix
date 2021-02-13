@@ -4,7 +4,7 @@ from entities import *
 from constants import *
 from menu import *
 from structures import *
-
+from level  import Level
 
 class Level1(Level):
 
