@@ -1,12 +1,21 @@
-import pygame, random, math, colour
 from constants import *
-from structures import Properties, set_text
+from game_properties import Properties
+from text import set_text
 
 
-def general_interactions_handler(game, event):
+def general_interactions_handler(game: Properties, event):
+    """
+        handler for general pygame events like video resize and quitting
+        Parameters
+        ----------
+        game : Properties
+           game properties to be changed with new size and level values
+        event :
+           Pygame event
+   """
     if event.type == pygame.QUIT:
         game.level = -1
-        return false
+        return false  # game closes
     elif event.type == pygame.VIDEORESIZE:
         new_size = event.dict['size']
         # global width, height
@@ -16,16 +25,18 @@ def general_interactions_handler(game, event):
             game.width = 1200
         if game.height < 800:
             game.height = 800
-        game.screen = pygame.display.set_mode((game.width, game.height), pygame.RESIZABLE | pygame.HWSURFACE | pygame.DOUBLEBUF)
+        game.screen = pygame.display.set_mode((game.width, game.height),
+                                              pygame.RESIZABLE | pygame.HWSURFACE | pygame.DOUBLEBUF)
     return true
 
 
 def game_over(game: Properties):
-    running = true
-    btn1 = pygame.Rect(((game.width - 200) // 2, 300, 200, 80))
-    btn2 = pygame.Rect(((game.width - 200) // 2, 500, 200, 80))
-    while running:
-
+    """
+        just game over menu
+    """
+    while true:
+        btn1 = pygame.Rect(((game.width - 200) // 2, 300, 200, 80))
+        btn2 = pygame.Rect(((game.width - 200) // 2, 500, 200, 80))
         for event in pygame.event.get():
             if not general_interactions_handler(game, event):
                 return false
@@ -50,11 +61,12 @@ def game_over(game: Properties):
 
 
 def pause_menu(game: Properties, won=false):
-    running = true
-    btn1 = pygame.Rect(((game.width - 200) // 2, 300, 200, 80))
-    btn2 = pygame.Rect(((game.width - 200) // 2, 500, 200, 80))
-    while running:
-
+    """
+            pause menu, triggered also when user wins
+    """
+    while true:
+        btn1 = pygame.Rect(((game.width - 200) // 2, 300, 200, 80))
+        btn2 = pygame.Rect(((game.width - 200) // 2, 500, 200, 80))
         for event in pygame.event.get():
             if not general_interactions_handler(game, event):
                 return false
@@ -78,19 +90,20 @@ def pause_menu(game: Properties, won=false):
         game.screen.blit(text0[0], text0[1])
         game.screen.blit(text1[0], text1[1])
         game.screen.blit(text2[0], text2[1])
-
         pygame.display.update()
         game.clock.tick(game.fps)
 
 
 def main_menu(game: Properties):
-    running = true
-    btn1 = pygame.Rect(((game.width - 200) // 2, 300, 200, 80))
-    btn2 = pygame.Rect(((game.width - 200) // 2, 500, 200, 80))
-    btn3 = pygame.Rect(((game.width - 200) // 2, 700, 200, 80))
-    while running:
+    """
+                main menu with level selector
+    """
+    while true:
+        btn1 = pygame.Rect(((game.width - 200) // 2, 300, 200, 80))
+        btn2 = pygame.Rect(((game.width - 200) // 2, 500, 200, 80))
+        btn3 = pygame.Rect(((game.width - 200) // 2, 700, 200, 80))
         game.screen.fill((0, 0, 255))
-
+        game.screen.blit(menu_background,(0,0))
         for event in pygame.event.get():
             if not general_interactions_handler(game, event):
                 return false

@@ -1,19 +1,21 @@
-import pygame, random, math, colour
 from interactions import *
-from entities import *
+from game_properties import Properties
+from entities import Sphere, Player
 from constants import *
-from menu import *
-from structures import *
-from level  import Level
+from menu import pause_menu, game_over
+from level import Level
 
 class Level1(Level):
-
+    """
+            first level become the biggest
+            """
     def __init__(self, game: Properties):
         super().__init__(game)
 
     def level_init(self):
         self.player = Player(20, random.randint(20, game_width - 20), random.randint(20, game_height - 20))
         self.player.game=self.game
+
         # self.player = Player(200, 400, 400)
 
         self.enemies = [
@@ -25,19 +27,8 @@ class Level1(Level):
             enemy.speed(random.randint(-1, 1) / 1, random.randint(-1, 1) / 1)
 
     def run_level(self):
-        # level0_init(self)
-        # running = true
-        # player = None
-        # enemies = []
-        # clicks = 0
-        # scale = 1
-        # won=false
-        # paused = false
         while self.running:
             self.game.screen.fill((0, 0, 255))
-            # self.screen.blit(background, (0, 0))
-            # ratio = (width / game_width) * self.scale
-            # self.screen.blit(pygame.transform.scale(background, (game_width, game_height)), (round(-player.x*(width/game_width)*scale), round(-player.y*(width/game_width))*scale))
             self.game.screen.blit(
                 pygame.transform.scale(background, (round(game_width * self.scale), round(game_height * self.scale))),
                 (round(-(self.player.x * self.scale - self.player.pos()[0])),
@@ -47,7 +38,6 @@ class Level1(Level):
                 return
             if self.clicks > 0:
                 self.clicks -= 1
-            # print(clicks)
             if not self.paused:
                 if self.player.size < 1:
                     return game_over(self.game)

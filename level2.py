@@ -1,10 +1,9 @@
-import pygame, random, math, colour
 from interactions import *
-from entities import *
+from game_properties import Properties
+from entities import Sphere, Player, Repulsor
 from constants import *
-from menu import *
-from structures import *
-from level  import Level
+from menu import pause_menu, game_over
+from level import Level
 
 class Level2(Level):
 
