@@ -51,7 +51,7 @@ class Sphere:
 
     def update(self):
         """
-            update enemy position and color
+            update enemy position and color, returns false if dead
         """
         if self.size < 1:  # kills enemy
             return false
