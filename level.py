@@ -34,21 +34,21 @@ class Level:
                     if self.time<2:
                         self.time += 0.1
                         Sphere.time = self.time
-                        text = set_text(str(round(self.time,1))+'x', width // 2, height-100, 50)
+                        text = set_text(str(round(self.time,1))+'x', self.game.width // 2, self.game.height-100, 50)
                         self.game.screen.blit(text[0], text[1])
                 if event.key == pygame.K_s:
                     if self.time >0.6:
                         self.time -= 0.1
                         Sphere.time = self.time
-                        text = set_text(str(round(self.time, 1)) + 'x', width // 2, height - 100, 50)
+                        text = set_text(str(round(self.time, 1)) + 'x', self.game.width // 2, self.game.height - 100, 50)
                         self.game.screen.blit(text[0], text[1])
             if not self.paused:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 4:
-                        if width / self.player.scaled_size() > 15:
+                        if self.game.width / self.player.scaled_size() > 15:
                             self.scale += 0.1
                     if event.button == 5:
-                        if self.scale > 0.1 and width / self.player.scaled_size() < 40:
+                        if self.scale > 0.1 and self.game.width / self.player.scaled_size() < 40:
                             self.scale -= 0.1
                     if event.button == 1:
                         self.clicks += 50

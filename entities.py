@@ -1,6 +1,6 @@
 import pygame, random, math, colour
 from constants import *
-
+from game_properties import Properties
 class Sphere:
     playerSize = 0
     player = None
@@ -59,13 +59,14 @@ class Sphere:
 
 
 class Player(Sphere):
+    game=Properties
     def update(self):
         self.move()
         Sphere.playerSize = self.size
         Sphere.player = self
 
     def pos(self):
-        return width / 2, height / 2
+        return self.game.width / 2, self.game.height / 2
 
     def accelerate(self, trig, power):
         x, y = trig

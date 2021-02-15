@@ -14,6 +14,8 @@ class Level2(Level):
     def level_init(self):
         # self.player = Player(20, random.randint(20, game_width - 20), random.randint(20, game_height - 20))
         self.player = Player(30, 400, 400)
+        self.player.game=self.game
+
 
         self.enemies = [
             Sphere(random.randint(2, 20), random.randint(20, game_width - 20), random.randint(20, game_height - 20)) for
@@ -36,7 +38,7 @@ class Level2(Level):
         while self.running:
             self.game.screen.fill((0, 0, 255))
             # self.screen.blit(background, (0, 0))
-            ratio = (width / game_width) * self.scale
+            # ratio = (width / game_width) * self.scale
             # self.screen.blit(pygame.transform.scale(background, (game_width, game_height)), (round(-player.x*(width/game_width)*scale), round(-player.y*(width/game_width))*scale))
             self.game.screen.blit(
                 pygame.transform.scale(background, (round(game_width * self.scale), round(game_height * self.scale))),
